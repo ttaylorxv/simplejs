@@ -14,7 +14,7 @@ try {
             openshiftDeploy depCfg: 'simplejs-dev', verbose: 'false'
             openshiftVerifyDeployment depCfg: 'simplejs-dev', verbose: 'false'
             
-            openshiftTag alias: 'false', destStream: 'simplejs-dev', destTag: 'qa', srcStream: 'simplejs-dev', srcTag: 'dev', verbose: 'false'
+            openshiftTag alias: 'false', destStream: 'simplejs-qa', destTag: 'qa', srcStream: 'simplejs-dev', srcTag: 'dev', verbose: 'false'
         }
         stage('Approve QA Deployment') {
             timeout(time: 2, unit: 'DAYS') {
@@ -26,7 +26,7 @@ try {
             openshiftDeploy depCfg: 'simplejs-qa', verbose: 'false'
             openshiftVerifyDeployment depCfg: 'simplejs-qa', verbose: 'false'
 
-            openshiftTag alias: 'false', destStream: 'simplejs-dev', destTag: 'prod', srcStream: 'simplejs-dev', srcTag: 'qa', verbose: 'false'
+            openshiftTag alias: 'false', destStream: 'simplejs-prod', destTag: 'prod', srcStream: 'simplejs-qa', srcTag: 'qa', verbose: 'false'
         }
         // Wait until authorization to push to production
         stage('Approve Production Deployment') {
@@ -36,8 +36,8 @@ try {
         }
         // Push to production
         stage('Deploy to Production') {
-            openshiftDeploy depCfg: 'simplejs-dev', verbose: 'false'
-            openshiftVerifyDeployment depCfg: 'simplejs-dev', verbose: 'false'
+            openshiftDeploy depCfg: 'simplejs-prod', verbose: 'false'
+            openshiftVerifyDeployment depCfg: 'simplejs-prod', verbose: 'false'
             
         } 
     }
