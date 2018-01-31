@@ -36,7 +36,7 @@ try {
         }
         // Push to production
         stage('Deploy to Production') {
-            openshiftDeploy depCfg: 'simple-nodejs-dev', verbose: 'false'
+            openshiftDeploy depCfg: 'simplejs-dev', verbose: 'false'
             openshiftVerifyDeployment depCfg: 'simplejs-dev', verbose: 'false'
             
         } 
