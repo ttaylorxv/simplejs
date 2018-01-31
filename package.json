@@ -1,24 +1,22 @@
 {
   "name": "simplejs",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
     "test": "npm test"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "express": "^4.16.2"
-  },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ttaylorxv/simplejs.git"
   },
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/ttaylorxv/simplejs/issues"
   },
-  "homepage": "https://github.com/ttaylorxv/simplejs#readme"
+  "homepage": "https://github.com/ttaylorxv/simplejs#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
 }
