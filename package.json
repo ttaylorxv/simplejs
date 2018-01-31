@@ -1,0 +1,23 @@
+{
+  "name": "simplejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttaylorxv/simplejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ttaylorxv/simplejs/issues"
+  },
+  "homepage": "https://github.com/ttaylorxv/simplejs#readme"
+}
