@@ -21,7 +21,7 @@ try {
                 input message: 'Do you want to deploy into Q&A?'
             }
         }
-        Stage ('Build QA') {
+        stage ('Build QA') {
             openshiftBuild apiURL: '', authToken: '', bldCfg: 'simplejs-qa', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
             openshiftVerifyBuild bldCfg: 'simplejs-qa', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
 
@@ -39,7 +39,7 @@ try {
                 input message: 'Do you want to deploy into production?'
             }
         }
-        stage('build Prod'}{
+        stage('build Prod'){
             openshiftBuild apiURL: '', authToken: '', bldCfg: 'simplejs-prod', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
             openshiftVerifyBuild bldCfg: 'simplejs-prod', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
 
