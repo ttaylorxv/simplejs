@@ -1,4 +1,8 @@
 process.env.NODE_ENV = 'test';
+var chai = require('chai');
+var app = require ('../index.js');
+var supertest = require('supertest');
+var request = supertest(app);
 
 describe ('test rest', () => {
   it('Return the homepage with message', (done) => {
