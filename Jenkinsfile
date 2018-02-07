@@ -4,34 +4,56 @@ import hudson.model.*
 
 try {
     node {
-        stage('Build') {
-            openshiftBuild apiURL: '', authToken: '', bldCfg: 'simplejs-dev', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
-            openshiftVerifyBuild bldCfg: 'simplejs-dev', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
+       
+        def branch = BRANCH_NAME.toLowerCase();
+        def source = BRANCH_NAME
+        if (branch.contains('/')){
+            branch = branch.substring(branch.lastIndexOf("/") + 1)
+        }
+            
+        if (!branch.equalsIgnoreCase("master")){
+        
+        stage('checkout-and-test') {
+            checkout scm
+      
+            sh """oc process -f nodejs-mongo-jenkinspipe.json -p NAME=$branch -p SOURCE_REPOSITORY_URL=https://github.com/ttaylorxv/tickHW.git -p SOURCE_REPOSITORY_REF=$source -p DATABASE_NAME=$branch -p DATABASE_SERVICE_NAME=$branch-mongodb -lapp=$branch | oc apply -f - """
+           
+            openshiftBuild apiURL: '', authToken: '', bldCfg: """$branch""", buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
+            
 
-            openshiftTag alias: 'false', destStream: 'simplejs-dev', destTag: 'dev', srcStream: 'simplejs-dev', srcTag: 'latest', verbose: 'false'
+        }
+        /*stage('Deploy to Test Environment for $branch') {
+            openshiftDeploy depCfg: """$branch""", verbose: 'false'
+            openshiftVerifyDeployment depCfg: """$branch""", verbose: 'false'
+        }*/
+
+
+        } else {
+        
+        
+        stage('Build') {
+            openshiftBuild apiURL: '', authToken: '', bldCfg: 'simple-nodejs-dev', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
+            openshiftVerifyBuild bldCfg: 'simple-nodejs-dev', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
+
+            openshiftTag alias: 'false', destStream: 'simple-nodejs-dev', destTag: 'dev', srcStream: 'simple-nodejs-dev', srcTag: 'latest', verbose: 'false'
         }
         stage('Deploy to Dev') {
-            openshiftDeploy depCfg: 'simplejs-dev', verbose: 'false'
-            openshiftVerifyDeployment depCfg: 'simplejs-dev', verbose: 'false'
+            openshiftDeploy depCfg: 'simple-nodejs-dev', verbose: 'false'
+            openshiftVerifyDeployment depCfg: 'simple-nodejs-dev', verbose: 'false'
             
-            openshiftTag alias: 'false', destStream: 'simplejs-qa', destTag: 'qa', srcStream: 'simplejs-dev', srcTag: 'dev', verbose: 'false'
+            openshiftTag alias: 'false', destStream: 'simple-nodejs-dev', destTag: 'qa', srcStream: 'simple-nodejs-dev', srcTag: 'dev', verbose: 'false'
         }
         stage('Approve QA Deployment') {
             timeout(time: 2, unit: 'DAYS') {
                 input message: 'Do you want to deploy into Q&A?'
             }
         }
-        stage ('Build QA') {
-            openshiftBuild apiURL: '', authToken: '', bldCfg: 'simplejs-qa', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
-            openshiftVerifyBuild bldCfg: 'simplejs-qa', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
-
-        }
         // Publish to a QA environment
         stage('Deploy to QA') {
-            openshiftDeploy depCfg: 'simplejs-qa', verbose: 'false'
-            openshiftVerifyDeployment depCfg: 'simplejs-qa', verbose: 'false'
+            openshiftDeploy depCfg: 'simple-nodejs-qa', verbose: 'false'
+            openshiftVerifyDeployment depCfg: 'simple-nodejs-qa', verbose: 'false'
 
-            openshiftTag alias: 'false', destStream: 'simplejs-prod', destTag: 'prod', srcStream: 'simplejs-qa', srcTag: 'qa', verbose: 'false'
+            openshiftTag alias: 'false', destStream: 'simple-nodejs-dev', destTag: 'prod', srcStream: 'simple-nodejs-dev', srcTag: 'qa', verbose: 'false'
         }
         // Wait until authorization to push to production
         stage('Approve Production Deployment') {
@@ -39,17 +61,13 @@ try {
                 input message: 'Do you want to deploy into production?'
             }
         }
-        stage('build Prod'){
-            openshiftBuild apiURL: '', authToken: '', bldCfg: 'simplejs-prod', buildName: '', checkForTriggeredDeployments: 'true', commitID: '', namespace: '', showBuildLogs: 'true', verbose: 'false', waitTime: '', waitUnit: 'sec'
-            openshiftVerifyBuild bldCfg: 'simplejs-prod', checkForTriggeredDeployments: 'true', showBuildLogs: 'true', verbose: 'false'
-
-        }
         // Push to production
         stage('Deploy to Production') {
-            openshiftDeploy depCfg: 'simplejs-prod', verbose: 'false'
-            openshiftVerifyDeployment depCfg: 'simplejs-prod', verbose: 'false'
+            openshiftDeploy depCfg: 'simple-nodejs-dev', verbose: 'false'
+            openshiftVerifyDeployment depCfg: 'simple-nodejs-dev', verbose: 'false'
             
         } 
+        }
     }
 } catch (err) {
     echo "in catch block"
